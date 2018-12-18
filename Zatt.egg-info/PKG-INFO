@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: Zatt
+Version: 1.0
+Summary: Implementation of the Raft algorithm for distributed consensus
+Home-page: https://github.com/simonacca/zatt
+Author: Simone Accascina
+Author-email: simon@accascina.me
+License: GPL
+Description: UNKNOWN
+Keywords: distributed consensus raft
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Distributed Systems :: Consens Algorithms
+Classifier: License :: OSI Approved :: GPL License
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5

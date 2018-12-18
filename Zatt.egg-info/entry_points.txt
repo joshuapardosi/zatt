@@ -1,0 +1,3 @@
+[console_scripts]
+zattd = zatt.server.main:run
+
