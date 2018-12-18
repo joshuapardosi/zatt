@@ -107,7 +107,7 @@ Also note that JSON, currently used for serialization, only supports keys of typ
 ## Tests
 In order to run the tests:
 
-* clone the repo if you haven't done so already: `git clone https://github.com/ReinhartC/zatt.git`
+* clone the repo if you haven't done so already: `git clone https://github.com/joshuapardosi/zatt`
 * navigate to the test folder: `cd zatt_cluster`
 * execute: `python3 client_side.py`
 
