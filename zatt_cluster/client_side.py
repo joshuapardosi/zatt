@@ -1,161 +1,260 @@
 from zatt.client import DistributedDict
+from flask import Flask, render_template, request, send_file, redirect
+from subprocess import check_output, call
+
+# from os import chdir as cd
+# from re import match
+
+import os
+import webbrowser
+
+def row_major(alist, sublen):      
+  return [alist[i:i+sublen] for i in range(0, len(alist), sublen)]
 
 def test_1_append(port):
-    print('[Append Test]')
+    html_file = open('test_1.html','w')
+    message_up = """
+<html>
+<head>
+    <title>Converter</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/ytdl.js"></script>
+</head>
+<body>
+    """
+    message_down = """
+</body>
+</html>
+    """
+    html_file.write(message_up)
+    html_file.write('[Append Test]')
     d = DistributedDict('127.0.0.1', port)
     d['adams'] = 'the hitchhiker guide'
-    print ("[1] d['adams'] =", d['adams'])
+    html_file.write("<p>[1] d['adams'] =" + str(d['adams']) + "</p>")
     del d
     d = DistributedDict('127.0.0.1', port)
     d['adams'] = 'the hitchhiker guide'
-    print ("[2] d['adams'] =", d['adams'])
+    html_file.write("<p>[2] d['adams'] =" + str(d['adams']) + "</p>")
+    html_file.write(message_down)
+    webbrowser.open_new_tab('test_1.html')
 
 def test_2_delete(port):
-    print('[Delete Test]')
+    html_file = open('test_2.html','w')
+    message_up = """
+<html>
+<head>
+    <title>Converter</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/ytdl.js"></script>
+</head>
+<body>
+    """
+    message_down = """
+</body>
+</html>
+    """
+    html_file.write(message_up)
+    html_file.write('[Delete Test]')
     d = DistributedDict('127.0.0.1', port)
     d['adams'] = 'the hitchhiker guide'
-    print ("[1] d =", d, "dengan d['adams'] =", d['adams'])
+    html_file.write("<p>[1] d =" + str(d) + "dengan d['adams'] =" + str(d['adams']) + "</p>")
     del d['adams']
-    print ("[2] Maka, d =", d)
+    html_file.write("<p>[2] Maka, d =" + str(d) + "</p>")
+    html_file.write(message_down)
+    webbrowser.open_new_tab('test_2.html')
         
 def test_3_read_from_different_client(port):
-    print('[Read from Different Client]')
+    html_file = open('test_3.html','w')
+    message_up = """
+<html>
+<head>
+    <title>Converter</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/ytdl.js"></script>
+</head>
+<body>
+    """
+    message_down = """
+</body>
+</html>
+    """
+    html_file.write(message_up)
+    html_file.write('[Read from Different Client]')
     d = DistributedDict('127.0.0.1', port)
     d['adams'] = 'the hitchhiker guide'
-    print ("[1] d['adams'] =", d['adams'], "pada port:", port)
+    html_file.write("<p>[1] d['adams'] =" + str(d['adams']) + "pada port: " + str(port) + "</p>")
     del d
     d = DistributedDict('127.0.0.1', 9102)
     d['adams'] = 'the hitchhiker guide'
-    print ("[2] d['adams'] =", d['adams'], "pada port: 9102")
+    html_file.write("<p>[2] d['adams'] =" + str(d['adams']) + "pada port: 9102" + "</p>")
+    html_file.write(message_down)
+    webbrowser.open_new_tab('test_3.html')
 
-def test_4_add_server(port):
-    print('[Add New Server]')
-    d = DistributedDict('127.0.0.1', port)
-    d['test'] = 0
-    port_baru = int(input("[1] Pastikan server telah dijalankan." \
-                          " Inputkan Port Server Baru = "))
-    d.config_cluster('add', '127.0.0.1', port_baru)
-    del d
-    d = DistributedDict('127.0.0.1', port_baru)
-    print ("[2] List baru Cluster=", d.diagnostic['volatile']['cluster']) 
-    print ("[3] d[test] =", d['test'])
-
-def test_5_remove_server(port):
-    print('[Remove Server]')
-    d = DistributedDict('127.0.0.1', port)
-    port_del = int(input("[1] Inputkan port server yang mau dihapus = "))
-    d.config_cluster('delete', '127.0.0.1', port_del)
-    print ("[2] Port yang tersisa:", d.diagnostic['volatile']['cluster'])
-    
-def test_6_input_file(port):
-    print('[Input File]')
-    d = DistributedDict('127.0.0.1', port)
-    path = input("[1] Open File. Path = ")
-    opened = open(path,'r')
-    d[path] = opened.read()
-    print ("Isi File [", path, "] =", d[path], "\n[2] Sukses Disimpan.")
-    print (d)
-    opened.close()
-
-def test_7_diagnostic(port):
-    print('[Diagnostic Test]')
+def test_5_diagnostic(port):
+    html_file = open('test_7.html','w')
+    message_up = """
+<html>
+<head>
+    <title>Converter</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/ytdl.js"></script>
+</head>
+<body>
+    """
+    message_down = """
+</body>
+</html>
+    """
+    html_file.write(message_up)
+    html_file.write('[Diagnostic Test]')
     d = DistributedDict('127.0.0.1', port)
     diagnostics = d.diagnostic
-    print("\n[1] Server memberi vote untuk port:", diagnostics['persist']['votedFor'])
-    print("[2] CurrentTerm:", diagnostics['persist']['currentTerm'])
-    print("[3] Leader Saat ini:", diagnostics['volatile']['leaderId'])
-    print("[4] List Cluster:", diagnostics['volatile']['cluster'])
-    print ("\n[5] Full Diagnostic:", diagnostics)
-    print ("\n[6] d:", d)
+    html_file.write("\n<p>[1] Server memberi vote untuk port: " + str(diagnostics['persist']['votedFor']) + "</p>")
+    html_file.write("<p>[2] CurrentTerm: " + str(diagnostics['persist']['currentTerm']) + "</p>")
+    html_file.write("<p>[3] Leader Saat ini: " + str(diagnostics['volatile']['leaderId']) + "</p>")
+    html_file.write("<p>[4] List Cluster: " + str(diagnostics['volatile']['cluster']) + "</p>")
+    html_file.write("\n<p>[5] Full Diagnostic: " + str(diagnostics) + "</p>")
+    html_file.write("\n<p>[6] d: " + str(d) + "</p>")
+    html_file.write(message_down)
+    webbrowser.open_new_tab('test_7.html')
 
-def test_8_export_file(port):
-    print('[Export File]')
+def test_6_export_file(port):
+    html_file = open('D:/Desktop/zatt/zatt_cluster/templates/test_6.html','w')
+    message_up = """
+<html>
+<head>
+    <title>Zatt</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" \
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/ytdl.js"></script>
+</head>
+<body>
+    <div class="container">
+    <div class="title">
+        <h1><strong>Export File</strong></h1>
+    </div>
+    """
+    message_down = """
+            <button id="submit" class="btn btn-primary" type="submit" form="dlform" value="test8">Send</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+    """
+    input = """
+        <form id="dlform" name="dlform" action="/test6" method="post">
+            <div class="form-group">
+    """
+    html_file.write(message_up)
     d = DistributedDict('127.0.0.1', port)
-    print ("[1] d =", d)
-    path = input("[2] File yang ingin disave = ")
-    opsi = input("[3] save || save_as = ")
-    if (opsi == "save"):
-        if ".txt" not in path:
-            open(path + '.txt', 'w').write(str(d[path]))
-            print ("[4] File =", path, "telah disimpan.")
+    html_file.write(input)
+    html_file.write("<label>[1] d = " + str(d) + "</label><br>")
+    html_file.write("<label>[2] File yang ingin disave</label>\
+                     <input class='form-control' id='files' name='files' type='text'>\
+                 </div>\
+                 <div class='form-group'>\
+                     <label>Port </label>\
+                     <input class='form-control' type='number' id='port' name='port' value='"+ str(port) +"'><br>")
+    html_file.write(message_down)
+    webbrowser.open_new_tab('/test_6')
+
+app = Flask(__name__)
+
+@app.route("/")
+def root():
+    return render_template("index.html")
+
+@app.route("/test_4")
+def test_4():
+    return render_template("test_4.html")
+
+@app.route("/test4", methods=['POST'])
+def test_4_export_file():
+    url = request.form.get('url', type=str)
+    file_ke = request.form.get('files', type=str)
+    port_ke = request.form.get('port', type=int)
+    html_file = open('D:/Desktop/zatt/zatt_cluster/templates/result.html','w')
+    message_up = """
+<html>
+<head>
+    <title>Zatt</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" \
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/ytdl.js"></script>
+</head>
+<body>
+    <div class="container">
+    <div class="title">
+        <h1><strong>Penyimpanan Sukses</strong></h1>
+    </div>
+    """
+    message_down = """
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+    """
+    input = """
+        <form id="dlform" name="dlform" action="/test8" method="post">
+            <div class="form-group">
+                <label for="files">File:</label>
+    """
+    d = DistributedDict('127.0.0.1', port_ke)
+    opened = open(file_ke,'r')
+    d[file_ke] = opened.read()
+    html_file.write(message_up)
+    html_file.write(input)
+    html_file.write("<p>Isi File [" + file_ke + "] = " + d[file_ke] + "</p><p>Sukses Disimpan.</p>")
+    html_file.write("<p>d = " + str(d) + ".")
+    opened.close()
+    webbrowser.open_new_tab('D:/Desktop/zatt/zatt_cluster/templates/result.html')
+    return render_template("index.html")
+
+@app.route("/test6", methods=['POST'])
+def test_8_input_file():
+    url = request.form.get('url', type=str)
+    file_ke = request.form.get('files', type=str)
+    port_ke = request.form.get('port', type=int)
+
+    d = DistributedDict('127.0.0.1', port_ke)
+    if ".txt" not in file_ke:
+        open('D:/Desktop/zatt/zatt_cluster/export/'+ file_ke + '.txt', 'w').write(str(d[file_ke]))
+    webbrowser.open_new_tab('D:/Desktop/zatt/zatt_cluster/export/'+ file_ke + '.txt')
+    return render_template("index.html")
+
+@app.route("/send", methods=['POST'])
+def download():
+    url = request.form.get('url', type=str)
+    test_ke = request.form.get('test', type=str)
+    port_ke = request.form.get('port', type=int)
+
+    if (test_ke == "test_1"):
+        test_1_append(port_ke)
+    elif (test_ke == "test_2"):
+        test_2_delete(port_ke)
+    elif (test_ke == "test_3"):
+        if(port_ke != 9102):
+            test_3_read_from_different_client(port_ke)
+    elif (test_ke == "test_4"):
+        return render_template("test_4.html")
+        #test_4_input_file(port_ke)
+    elif (test_ke == "test_5"):
+            test_5_diagnostic(port_ke)
+    elif (test_ke == "test_6"):
+            test_6_export_file(port_ke)
+            return render_template("test_6.html")
     else:
-        output = input("[4] Save Sebagai = ")
-        if ".txt" not in output:
-            open(output + ".txt",'w').write(str(d[path]))
-        print ("[5] File =", path, ", disimpan sebagai =", output + ".txt")
+        return render_template("failed.html")
+    return render_template("index.html")
 
-def test_9_compacted_log_replication(port):
-    print('[Compacted Log Replication]')
-    d = DistributedDict('127.0.0.1', port)
-    d['test'] = 0
-    print("[1] d[test] =", d['test'])
-    d['test'] = 1
-    print("[2] d[test] =", d['test'])
-    d['test'] = 2
-    print("[3] d[test] =", d['test'])
-    d['test'] = 3
-    print("[4] d[test] =", d['test'])
-    d['test'] = 4  # compaction kicks in
-    print("[5] d[test] =", d['test'])
-    del d
-    d = DistributedDict('127.0.0.1', 9102)
-    print("d[test] =", d['test'])
-    
-def coba():
-    port = int(input("Port = "))
-    print ("Menggunakan Port ", port)
-    while True:
-        uji = input("UJI COBA:\nTest_1 = Append\ntest_2 = Delete\ntest_3 = Read from different client\n" \
-                    "test_4 = Add server\ntest_5 = Remove server\ntest_6 = Input file\ntest_7 = Diagnostic\n" \
-                    "test_8 = Export_file\nend = Stop Loops\n\nTest ke Berapa? ")
-        if (uji == "end"):
-            break
-        if (uji == "test_1"):
-            test_1_append(port)
-        elif (uji == "test_2"):
-            test_2_delete(port)
-        elif (uji == "test_3"):
-            if(port != 9102):
-                test_3_read_from_different_client(port)
-        elif (uji == "test_4"):
-            test_4_add_server(port)
-        elif (uji == "test_5"):
-            test_5_remove_server(port)
-        elif (uji == "test_6"):
-            test_6_input_file(port)
-        elif (uji == "test_7"):
-            test_7_diagnostic(port)
-        elif (uji == "test_8"):
-            test_8_export_file(port)
-        elif (uji == "test_9"):
-            if(port != 9102):
-                test_9_compacted_log_replication(port)
-                
-if __name__ == '__main__':
-    coba()
-
-"""
-    uji = input("UJI COBA:\ntest_1 = append\ntest_2 = delete\ntest_3 = read from different client\n" \
-                "test_4 = add server\ntest_5 = remove server\ntest_6 = input file\ntest_7 = diagnostic\n" \
-                "test_8 = export_file\n\nTest ke Berapa? ")
-    if (uji == "test_1"):
-        test_1_append(port)
-    elif (uji == "test_2"):
-        test_2_delete(port)
-    elif (uji == "test_3"):
-        if(port != 9102):
-            test_3_read_from_different_client(port)
-    elif (uji == "test_4"):
-        test_4_add_server(port)
-    elif (uji == "test_5"):
-        test_5_remove_server(port)
-    elif (uji == "test_6"):
-        test_6_input_file(port)
-    elif (uji == "test_7"):
-        test_7_diagnostic(port)
-    elif (uji == "test_8"):
-        test_8_export_file(port)
-    elif (uji == "test_9"):
-        if(port != 9102):
-            test_9_compacted_log_replication(port)
-"""
+if __name__ == "__main__":
+    app.run(debug=True,
+            host="0.0.0.0")
